@@ -1,0 +1,72 @@
+version: '2'
+services:
+  telegraf:
+    image: telegraf
+    ports:
+      - "8125:8125"
+      - "8092:8092"
+      - "8094:8094"
+
+    volumes:
+      - ./telegraf.conf:/etc/telegraf/telegraf.conf
+
+    depends_on:
+      - influxdb
+      - rethinkdb
+      # - mosquitto
+
+  # mosquitto:
+  #   image: ansi/mosquitto
+  #   ports:
+  #     - "1883:1883"
+
+  #   command: /usr/local/sbin/mosquitto -v -c /etc/mosquitto/mosquitto.conf
+
+  #   volumes:
+  #     - ./mosquitto.conf:/etc/mosquitto/mosquitto.conf
+  #     - ./data:/home/mosquitto/data
+
+  influxdb:
+    image: influxdb
+    ports:
+      - "8083:8083"
+      - "8086:8086"
+
+    volumes:
+      - ./influxdb.conf:/home/influxdb.conf
+      - ./data:/var/lib/influxdb/data
+
+    command: influxd -config /home/influxdb.conf
+
+    depends_on:
+      - chronograf
+      - kapacitor
+
+  rethinkdb:
+    image: rethinkdb
+    ports:
+      - "8080:8080"
+      - "28015:28015"
+      - "29015:29015"
+
+    volumes:
+      - ./data:/data
+
+    command: rethinkdb --bind all
+
+
+  chronograf:
+    image: chronograf
+    ports:
+      - "10000:10000"
+
+  kapacitor:
+    image: kapacitor
+    ports:
+      - "9092:9092"
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+
