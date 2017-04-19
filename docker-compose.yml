@@ -1,5 +1,8 @@
 version: '2'
 services:
+  postgres:
+    image: postgres
+
   telegraf:
     image: telegraf
     ports:
@@ -12,19 +15,6 @@ services:
 
     depends_on:
       - influxdb
-      - rethinkdb
-      # - mosquitto
-
-  # mosquitto:
-  #   image: ansi/mosquitto
-  #   ports:
-  #     - "1883:1883"
-
-  #   command: /usr/local/sbin/mosquitto -v -c /etc/mosquitto/mosquitto.conf
-
-  #   volumes:
-  #     - ./mosquitto.conf:/etc/mosquitto/mosquitto.conf
-  #     - ./data:/home/mosquitto/data
 
   influxdb:
     image: influxdb
@@ -42,19 +32,6 @@ services:
       - chronograf
       - kapacitor
 
-  rethinkdb:
-    image: rethinkdb
-    ports:
-      - "8080:8080"
-      - "28015:28015"
-      - "29015:29015"
-
-    volumes:
-      - ./data:/data
-
-    command: rethinkdb --bind all
-
-
   chronograf:
     image: chronograf
     ports:
@@ -69,4 +46,3 @@ services:
     image: grafana/grafana
     ports:
       - "3000:3000"
-
